@@ -7,9 +7,8 @@ This is reference solution around the Application Customizer which is built usin
 
 ![picture of the extension in action, if possible](./assets/screenshot.png)
 
-
 ## Used SharePoint Framework Version 
-![drop](https://img.shields.io/badge/version-GA-green.svg)
+![drop](https://img.shields.io/badge/version-1.2.0-green.svg)
 
 ## Applies to
 
@@ -18,7 +17,7 @@ This is reference solution around the Application Customizer which is built usin
 
 ## Prerequisites
  
-During developer preview, SPFx Extensions only work in developer tenants. You can get dev tenant by joining on the [Office 365 Dev Program](https://dev.office.com/devprogram).
+During Release Candidate (RC) status, SPFx Extensions only work in first release or dev tenants. You can get a dev tenant free by joining on the [Office 365 Dev Program](https://dev.office.com/devprogram).
 
 ## Solution
 
@@ -30,6 +29,7 @@ App-Extension | Vesa Juvonen, Microsoft
 
 Version|Date|Comments
 -------|----|--------
+1.1|August 29, 2017|Updated to Release Candidate version
 1.0|June 6, 2017|Initial release
 
 ## Disclaimer
@@ -47,12 +47,12 @@ Version|Date|Comments
 - Use following query parameter in the SharePoint site to get extension loaded without installing it to app catalog
 
 ```
-?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js&customActions={"46606aa6-5dd8-4792-b017-1555ec0a43a4":{"location":"ClientSideExtension.ApplicationCustomizer","properties":{"Header":"Header area of the page","Footer":"Footer area in the page"}}}
+?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js&customActions={"151002e5-1c8f-4553-a91c-c57784b3cf38":{"location":"ClientSideExtension.ApplicationCustomizer","properties":{"Top":"Top area of the page","Bottom":"Bottom area in the page"}}}
 ```
 Full URL to request would be something like following:
 
 ```
-contoso.sharepoint.com/Lists/Contoso/AllItems.aspx?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js&customActions={"46606aa6-5dd8-4792-b017-1555ec0a43a4":{"location":"ClientSideExtension.ApplicationCustomizer","properties":{"Header":"Header area of the page","Footer":"Footer area in the page"}}}
+contoso.sharepoint.com/Lists/Contoso/AllItems.aspx?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js&customActions={"151002e5-1c8f-4553-a91c-c57784b3cf38":{"location":"ClientSideExtension.ApplicationCustomizer","properties":{"Top":"Top area of the page","Bottom":"Bottom area in the page"}}}
 ```
 
 <img src="https://telemetry.sharepointpnp.com/sp-dev-fx-extensions/tutorials/app-extension" />

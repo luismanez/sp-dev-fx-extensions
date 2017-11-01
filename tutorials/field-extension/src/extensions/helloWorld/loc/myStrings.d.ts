@@ -1,8 +1,8 @@
-declare interface IHelloWorldStrings {
+declare interface IHelloWorldFieldCustomizerStrings {
   Title: string;
 }
 
-declare module 'helloWorldStrings' {
-  const strings: IHelloWorldStrings;
+declare module 'HelloWorldFieldCustomizerStrings' {
+  const strings: IHelloWorldFieldCustomizerStrings;
   export = strings;
 }

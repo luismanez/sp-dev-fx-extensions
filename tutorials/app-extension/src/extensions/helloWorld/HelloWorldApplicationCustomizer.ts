@@ -2,12 +2,13 @@ import { override } from '@microsoft/decorators';
 import { Log } from '@microsoft/sp-core-library';
 import {
   BaseApplicationCustomizer,
-  Placeholder
+  PlaceholderContent,
+  PlaceholderName
 } from '@microsoft/sp-application-base';
 
-import * as strings from 'helloWorldStrings';
+import * as strings from 'HelloWorldApplicationCustomizerStrings';
 import styles from './AppCustomizer.module.scss';
-import { escape } from '@microsoft/sp-lodash-subset'; 
+import { escape } from '@microsoft/sp-lodash-subset';
 
 const LOG_SOURCE: string = 'HelloWorldApplicationCustomizer';
 
@@ -17,95 +18,97 @@ const LOG_SOURCE: string = 'HelloWorldApplicationCustomizer';
  * You can define an interface to describe it.
  */
 export interface IHelloWorldApplicationCustomizerProperties {
-  Header: string;
-  Footer: string;
+  Top: string;
+  Bottom: string;
 }
 
 /** A Custom Action which can be run during execution of a Client Side Application */
 export default class HelloWorldApplicationCustomizer
   extends BaseApplicationCustomizer<IHelloWorldApplicationCustomizerProperties> {
 
-  // These have been added
-  private _headerPlaceholder: Placeholder;
-  private _footerPlaceholder: Placeholder;
+  private _topPlaceholder: PlaceholderContent | undefined;
+  private _bottomPlaceholder: PlaceholderContent | undefined;
 
   @override
   public onInit(): Promise<void> {
     Log.info(LOG_SOURCE, `Initialized ${strings.Title}`);
+
+    // Added to handle possible changes on the existence of placeholders
+    this.context.placeholderProvider.changedEvent.add(this, this._renderPlaceHolders);
+
+    // Call render method for generating the needed html elements
+    this._renderPlaceHolders();
     return Promise.resolve<void>();
   }
 
-  @override
-  public onRender(): void {
+  private _renderPlaceHolders(): void {
 
-    console.log('CustomHeader.onRender()');
+    console.log('HelloWorldApplicationCustomizer._renderPlaceHolders()');
     console.log('Available placeholders: ',
-      this.context.placeholders.placeholderNames.join(', '));
+      this.context.placeholderProvider.placeholderNames.map(name => PlaceholderName[name]).join(', '));
 
-    // Handling header place holder
-    if (!this._headerPlaceholder) {
-      this._headerPlaceholder = this.context.placeholders.tryAttach(
-        'PageHeader',
-        {
-          onDispose: this._onDispose
-        });
+    // Handling the top placeholder
+    if (!this._topPlaceholder) {
+      this._topPlaceholder =
+        this.context.placeholderProvider.tryCreateContent(
+          PlaceholderName.Top,
+          { onDispose: this._onDispose });
 
       // The extension should not assume that the expected placeholder is available.
-      if (!this._headerPlaceholder) {
-        console.error('The expected placeholder was not found.');
+      if (!this._topPlaceholder) {
+        console.error('The expected placeholder (Top) was not found.');
         return;
       }
 
       if (this.properties) {
-        let headerString: string = this.properties.Header;
-        if (!headerString) {
-          headerString = '(Header property was not defined.)';
+        let topString: string = this.properties.Top;
+        if (!topString) {
+          topString = '(Top property was not defined.)';
         }
 
-        if (this._headerPlaceholder.domElement) {
-          this._headerPlaceholder.domElement.innerHTML = `
-                <div class="${styles.app}">
-                  <div class="ms-bgColor-themeDark ms-fontColor-white ${styles.header}">
-                    <i class="ms-Icon ms-Icon--Info" aria-hidden="true"></i> ${escape(headerString)}
-                  </div>
-                </div>`;
+        if (this._topPlaceholder.domElement) {
+          this._topPlaceholder.domElement.innerHTML = `
+                    <div class="${styles.app}">
+                      <div class="ms-bgColor-themeDark ms-fontColor-white ${styles.top}">
+                        <i class="ms-Icon ms-Icon--Info" aria-hidden="true"></i> ${escape(topString)}
+                      </div>
+                    </div>`;
         }
       }
     }
 
-    // Trying footer placeholder
-    if (!this._footerPlaceholder) {
-      this._footerPlaceholder = this.context.placeholders.tryAttach(
-        'PageFooter',
-        {
-          onDispose: this._onDispose
-        });
+    // Handling the bottom placeholder
+    if (!this._bottomPlaceholder) {
+      this._bottomPlaceholder =
+        this.context.placeholderProvider.tryCreateContent(
+          PlaceholderName.Bottom,
+          { onDispose: this._onDispose });
 
       // The extension should not assume that the expected placeholder is available.
-      if (!this._footerPlaceholder) {
-        console.error('The expected placeholder was not found.');
+      if (!this._bottomPlaceholder) {
+        console.error('The expected placeholder (Bottom) was not found.');
         return;
       }
 
       if (this.properties) {
-        let footerString: string = this.properties.Footer;
-        if (!footerString) {
-          footerString = '(Footer property was not defined.)';
+        let bottomString: string = this.properties.Bottom;
+        if (!bottomString) {
+          bottomString = '(Bottom property was not defined.)';
         }
 
-        if (this._footerPlaceholder.domElement) {
-          this._footerPlaceholder.domElement.innerHTML = `
-                <div class="${styles.app}">
-                  <div class="ms-bgColor-themeDark ms-fontColor-white ${styles.footer}">
-                    <i class="ms-Icon ms-Icon--Info" aria-hidden="true"></i> ${escape(footerString)}
-                  </div>
-                </div>`;
+        if (this._bottomPlaceholder.domElement) {
+          this._bottomPlaceholder.domElement.innerHTML = `
+                    <div class="${styles.app}">
+                      <div class="ms-bgColor-themeDark ms-fontColor-white ${styles.bottom}">
+                        <i class="ms-Icon ms-Icon--Info" aria-hidden="true"></i> ${escape(bottomString)}
+                      </div>
+                    </div>`;
         }
       }
     }
   }
 
-   private _onDispose(): void {
-    console.log('[CustomHeader._onDispose] Disposed custom header.');
+  private _onDispose(): void {
+    console.log('[HelloWorldApplicationCustomizer._onDispose] Disposed custom top and bottom placeholders.');
   }
 }

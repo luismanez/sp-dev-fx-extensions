@@ -1,20 +1,19 @@
 import { Log } from '@microsoft/sp-core-library';
 import { override } from '@microsoft/decorators';
 import {
-  CellFormatter,
   BaseFieldCustomizer,
   IFieldCustomizerCellEventParameters
 } from '@microsoft/sp-listview-extensibility';
 
-import * as strings from 'helloWorldStrings';
-import styles from './HelloWorld.module.scss';
+import * as strings from 'HelloWorldFieldCustomizerStrings';
+import styles from './HelloWorldFieldCustomizer.module.scss';
 
 /**
  * If your field customizer uses the ClientSideComponentProperties JSON input,
  * it will be deserialized into the BaseExtension.properties object.
  * You can define an interface to describe it.
  */
-export interface IHelloWorldProperties {
+export interface IHelloWorldFieldCustomizerProperties {
   // This is an example; replace with your own property
   sampleText?: string;
 }
@@ -22,7 +21,7 @@ export interface IHelloWorldProperties {
 const LOG_SOURCE: string = 'HelloWorldFieldCustomizer';
 
 export default class HelloWorldFieldCustomizer
-  extends BaseFieldCustomizer<IHelloWorldProperties> {
+  extends BaseFieldCustomizer<IHelloWorldFieldCustomizerProperties> {
 
   @override
   public onInit(): Promise<void> {
@@ -30,18 +29,18 @@ export default class HelloWorldFieldCustomizer
     // for the returned promise to resolve before firing any BaseFieldCustomizer events.
     Log.info(LOG_SOURCE, 'Activated HelloWorldFieldCustomizer with properties:');
     Log.info(LOG_SOURCE, JSON.stringify(this.properties, undefined, 2));
-    Log.info(LOG_SOURCE, `The following string should be equal: "HelloWorld" and "${strings.Title}"`);
+    Log.info(LOG_SOURCE, `The following string should be equal: "HelloWorldFieldCustomizer" and "${strings.Title}"`);
     return Promise.resolve<void>();
   }
 
   @override
   public onRenderCell(event: IFieldCustomizerCellEventParameters): void {
 
-    event.cellDiv.classList.add(styles.cell);
-    event.cellDiv.innerHTML = `
+    event.domElement.classList.add(styles.cell);
+    event.domElement.innerHTML = `
                 <div class='${styles.full}'>
-                  <div style='width: ${event.cellValue}px; background:#0094ff; color:#c0c0c0'>
-                    &nbsp; ${event.cellValue}
+                  <div style='width: ${event.fieldValue}px; background:#0094ff; color:#c0c0c0'>
+                    &nbsp; ${event.fieldValue}
                   </div>
                 </div>`;
   }

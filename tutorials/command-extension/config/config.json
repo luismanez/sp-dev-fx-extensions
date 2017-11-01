@@ -1,13 +1,18 @@
 {
-  "entries": [
-    {
-      "entry": "./lib/extensions/helloWorld/HelloWorldCommandSet.js",
-      "manifest": "./src/extensions/helloWorld/HelloWorldCommandSet.manifest.json",
-      "outputPath": "./dist/hello-world.bundle.js"
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "hello-world-command-set": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/helloWorld/HelloWorldCommandSet.js",
+          "manifest": "./src/extensions/helloWorld/HelloWorldCommandSet.manifest.json"
+        }
+      ]
     }
-  ],
+  },
   "externals": {},
   "localizedResources": {
-    "helloWorldStrings": "extensions/helloWorld/loc/{locale}.js"
+    "HelloWorldCommandSetStrings": "lib/extensions/helloWorld/loc/{locale}.js"
   }
 }

@@ -2,12 +2,13 @@ import { override } from '@microsoft/decorators';
 import { Log } from '@microsoft/sp-core-library';
 import {
   BaseListViewCommandSet,
-  IListViewCommandSetRefreshEventParameters,
+  Command,
+  IListViewCommandSetListViewUpdatedParameters,
   IListViewCommandSetExecuteEventParameters
 } from '@microsoft/sp-listview-extensibility';
 
-import * as strings from 'helloWorldStrings';
-import { Dialog } from '@microsoft/sp-dialog/lib/index';
+import * as strings from 'HelloWorldCommandSetStrings';
+import { Dialog } from '@microsoft/sp-dialog';
 
 /**
  * If your command set uses the ClientSideComponentProperties JSON input,
@@ -16,7 +17,7 @@ import { Dialog } from '@microsoft/sp-dialog/lib/index';
  */
 export interface IHelloWorldCommandSetProperties {
   // This is an example; replace with your own property
-  disabledCommandIds: string[];
+  disabledCommandIds: string[] | undefined;
 }
 
 const LOG_SOURCE: string = 'HelloWorldCommandSet';
@@ -31,13 +32,14 @@ export default class HelloWorldCommandSet
   }
 
   @override
-  public onRefreshCommand(event: IListViewCommandSetRefreshEventParameters): void {
-    event.visible = true; // assume true by default
-
+  public onListViewUpdated(event: IListViewCommandSetListViewUpdatedParameters): void {
     if (this.properties.disabledCommandIds) {
-      if (this.properties.disabledCommandIds.indexOf(event.commandId) >= 0) {
-        Log.info(LOG_SOURCE, 'Hiding command ' + event.commandId);
-        event.visible = false;
+      for (const commandId of this.properties.disabledCommandIds) {
+        const command: Command | undefined = this.tryGetCommand(commandId);
+        if (command && command.visible) {
+          Log.info(LOG_SOURCE, `Hiding command ${commandId}`);
+          command.visible = false;
+        }
       }
     }
   }

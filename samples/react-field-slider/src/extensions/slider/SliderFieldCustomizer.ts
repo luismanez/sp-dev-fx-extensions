@@ -28,7 +28,7 @@ const LOG_SOURCE: string = 'SliderFieldCustomizer';
 
 export default class SliderFieldCustomizer
   extends BaseFieldCustomizer<ISliderProperties> {
-    private _timerId: number = -1;
+  private _timerId: number = -1;
 
   @override
   public onInit(): Promise<void> {
@@ -45,9 +45,9 @@ export default class SliderFieldCustomizer
     // Use this method to perform your custom cell rendering.  The CellFormatter is a utility
     // that you can use to convert the cellValue to a text string.
     const value: string = event.cellValue;
-    const id: string = event.row.getValueByName('ID').toString();
+    const id: string = event.listItem.getValueByName('ID').toString();
     const hasPermissions: boolean = this.context.pageContext.list.permissions.hasPermission(SPPermission.editListItems);
-    
+
 
     const slider: React.ReactElement<{}> =
       React.createElement(Slider, { value: value, id: id, disabled: !hasPermissions, onChange: this.onSliderValueChanged.bind(this) } as ISliderProps);
@@ -69,22 +69,10 @@ export default class SliderFieldCustomizer
       clearTimeout(this._timerId);
 
     this._timerId = setTimeout(() => {
-      let etag: string = undefined;
-      pnp.sp.web.lists.getByTitle(this.context.pageContext.list.title).items.getById(parseInt(id)).get(undefined, {
-        headers: {
-          'Accept': 'application/json;odata=minimalmetadata'
-        }
-      })
-        .then((item: Item): Promise<any> => {
-          etag = item["odata.etag"];
-          return Promise.resolve((item as any) as any);
-        })
-        .then((item: any): Promise<ItemUpdateResult> => {
-          let updateObj: any = {};
-          updateObj[this.context.field.internalName] = value;
-          return pnp.sp.web.lists.getByTitle(this.context.pageContext.list.title)
-            .items.getById(parseInt(id)).update(updateObj, etag);
-        })
+      let updateObj: any = {};
+      updateObj[this.context.field.internalName] = value;
+      pnp.sp.web.lists.getByTitle(this.context.pageContext.list.title).items.getById(parseInt(id))
+        .update(updateObj)
         .then((result: ItemUpdateResult): void => {
           console.log(`Item with ID: ${id} successfully updated`);
         }, (error: any): void => {
